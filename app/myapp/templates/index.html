@@ -1,0 +1,74 @@
+<!-- index.html -->
+{% csrf_token %}
+<!DOCTYPE html>
+<html>
+<head> 
+    <title>Database Tables</title>
+</head>
+<body>
+    <h1>Reports</h1>
+    <table>
+        <tr>
+            <th>Address</th>
+            <th>Date</th>
+            <th>Coordinates</th>
+            <th>Image</th>
+        </tr>
+        {% for report in report_data %}
+        <tr>
+            <td>{{ report.Address }}</td>
+            <td>{{ report.Date }}</td>
+            <td>{{ report.Coordinates }}</td>
+            <td>{{ report.Image }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h1>Units</h1>
+    <table>
+        <tr>
+            <th>Address Range Low</th>
+            <th>Address Range High</th>
+            <th>Severity Score</th>
+            <th>Images</th>
+        </tr>
+        {% for unit in unit_data %}
+        <tr>
+            <td>{{ unit.frequency }}</td>
+            <td>{{ unit.images }}</td>
+            <button onclick="onButtonClick('{{ unit.id }}')">Update Unit Frequency</button>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> 
+<script>
+    $(document).ready(function(){
+        // Set up global AJAX settings to include CSRF token
+        $.ajaxSetup({
+            headers: {
+                'X-CSRFToken': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    });
+    
+    function onButtonClick(unit_id) {
+        console.log('Button clicked');
+        console.log("Unit ID: " + unit_id);
+        $.ajax({
+            url: 'update-unit-frequency',
+            method: 'POST',
+            data: {
+                'unit_id': unit_id
+            },
+            success: function(response) {
+                console.log('Response: ' + response.message);
+            },
+            error: function(error) {
+                console.log('Error: ', error);
+            }
+        });
+    }
+</script>
